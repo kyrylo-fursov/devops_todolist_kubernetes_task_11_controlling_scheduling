@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Label nodes for MySQL
+kubectl get nodes -o name | xargs -I {} kubectl label {} app=mysql
+
 # Add taints to mysql nodes
 kubectl taint nodes -l app=mysql app=mysql:NoSchedule
 
