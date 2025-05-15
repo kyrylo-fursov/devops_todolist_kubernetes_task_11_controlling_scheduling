@@ -16,23 +16,24 @@ spec:
     spec:
       affinity:
         nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - mysql
+        podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
-              preference:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - todoapp
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - todoapp
-              topologyKey: "kubernetes.io/hostname"
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - mysql
+                topologyKey: "kubernetes.io/hostname"
       containers:
       - name: mysql
         image: mysql:8.0
@@ -88,24 +89,6 @@ spec:
           operator: "Equal"
           value: "mysql"
           effect: "NoSchedule"
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - mysql
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - mysql
-              topologyKey: "kubernetes.io/hostname"
   volumeClaimTemplates:
   - metadata:
       name: data
